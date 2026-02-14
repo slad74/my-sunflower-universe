@@ -1,52 +1,85 @@
 import streamlit as st
-from streamlit_extras.let_it_rain import rain
+import os
+from PIL import Image, ImageOps
+from streamlit_snowfall import snowfall
 
-# --- 1. THEME & SETTINGS ---
+# 1. PAGE CONFIG
 st.set_page_config(page_title="Our Sunflower Universe", page_icon="🌻", layout="wide")
 
+# 2. GLITTER EFFECT (STARS)
+snowfall(flake_color=["#FFD700", "#FFFFFF", "#FFBE0B"], num_flakes=150, speed=2)
+
+# 3. CUSTOM THEME (Natural Sizes & Hover Effects)
 st.markdown("""
     <style>
-    .stApp {
-        background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
-        color: #FFD700;
+    .stApp { background: linear-gradient(180deg, #090A0F 0%, #1a1a2e 100%) !important; color: #FFD700; }
+    h1, h2, h3 { color: #FFD700 !important; text-shadow: 2px 2px #E94560; }
+    
+    /* MASONRY STYLE: Natural height, no cropping */
+    [data-testid="stHorizontalBlock"] .stImage img {
+        width: 100% !important;
+        height: auto !important; /* Shows original height */
+        object-fit: contain !important; /* No cropping */
+        border-radius: 15px;
+        border: 2px solid #E94560;
+        transition: transform 0.3s ease;
+        margin-bottom: 20px;
     }
-    h1, h2, h3 {
-        color: #FFD700 !important;
-        font-family: 'Trebuchet MS', sans-serif;
-        text-shadow: 2px 2px #E94560;
+    .stImage img:hover { 
+        transform: scale(1.05); 
+        border: 2px solid #FFD700; 
+        z-index: 10;
     }
-    .stCheckbox { color: white !important; }
-    .stButton>button {
-        background-color: #E94560;
-        color: white;
-        border-radius: 20px;
-        border: 2px solid #FFD700;
-        width: 100%;
-    }
+    .stButton>button { background-color: #E94560; color: white; border-radius: 20px; border: 2px solid #FFD700; width: 100%; }
     </style>
-    """, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
-# --- 2. SUBTLE SUNFLOWER RAIN ---
-rain(emoji="🌻", falling_speed=10, animation_length="infinite")
-
-# --- 3. HERO SECTION & SOUNDTRACK ---
+# 4. HEADER & AUDIO
 st.title("🌻 Our Sunflower Universe")
 st.write("### You're the Sunflower to my Spider-Verse")
 
-# Spotify Embed for our song
-st.markdown('<iframe src="https://open.spotify.com/embed/track/3G7tRCv4UsgtwDCC7sq1oV" width="100%" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>', unsafe_allow_html=True)
+# Replace YOUR_FILE_ID_HERE with your Google Drive Direct Link ID
+url = "https://drive.google.com/uc?export=download&id=YOUR_FILE_ID_HERE"
+st.audio(url, format='audio/mp4')
 
-st.divider()
-
-# --- 4. OUR JOURNEY ---
+# 5. ROAD TRIP SLIDER
 st.subheader("🏍️ Our Road Trip Adventure")
-trip = st.select_slider("How far have we come?", options=['Met', 'First Date', 'Bike Trips', 'Orlando Move', 'The Future'])
-st.info(f"Currently at the **{trip}** stage of our multiverse!")
+milestones = ["Met", "First Date", "Gokarna Trip", "Orlando Move", "The Future"]
+choice = st.select_slider("Where are we in the Multiverse?", options=milestones, value="Orlando Move")
 
-# --- 5. THE SURPRISE ---
-st.divider()
-if st.button("Click for our Multiverse Surprise"):
+def fix_image_orientation(image_input):
+    try:
+        img = Image.open(image_input)
+        img = ImageOps.exif_transpose(img)
+        return img
+    except: return None
+
+# 6. MULTIVERSE ALBUM (MASONRY LAYOUT)
+st.markdown("---")
+st.header("🎞️ Multiverse Album")
+
+# Get photos from the main directory on GitHub
+all_photos = [f for f in os.listdir('.') if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
+all_photos.sort()
+
+if not all_photos:
+    st.info("The multiverse is loading memories...")
+else:
+    # Use 3 vertical columns to let photos stack based on their own height
+    col1, col2, col3 = st.columns(3)
+    
+    for i, img_path in enumerate(all_photos):
+        processed_img = fix_image_orientation(img_path)
+        if processed_img:
+            if i % 3 == 0:
+                col1.image(processed_img, use_container_width=True)
+            elif i % 3 == 1:
+                col2.image(processed_img, use_container_width=True)
+            else:
+                col3.image(processed_img, use_container_width=True)
+
+# 7. SURPRISE
+st.markdown("---")
+if st.button("Click for our Multiverse Surprise ❤️"):
     st.balloons()
-    # Ensure 'us_cartoon.png' is in your 'Last Sem' folder
-    st.image("us_cartoon.png", caption="You, Me, and our NYC Adventure")
-    st.success("I love sharing this life with you! Happy Valentine's Day!")
+    st.success("I love sharing this life with you! Happy Valentine's Day! \n\n💛 Happy holidays!")
