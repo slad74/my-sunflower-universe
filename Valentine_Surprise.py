@@ -5,8 +5,8 @@ from PIL import Image, ImageOps
 # 1. PAGE CONFIG
 st.set_page_config(page_title="Our Sunflower Universe", page_icon="🌻", layout="wide")
 
-# 2. GLITTER EFFECT
-snowfall(flake_color=["#FFD700", "#FFFFFF", "#FFBE0B"], num_flakes=150, speed=2)
+# 2. THE STAR EFFECT (Stable Version)
+st.snow()
 
 # 3. CUSTOM THEME (Original Size Fix)
 st.markdown("""
