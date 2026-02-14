@@ -1,3 +1,2 @@
 streamlit
-Pio
-streamlit-snowfall
+Pillow
