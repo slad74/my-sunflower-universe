@@ -1,7 +1,6 @@
 import streamlit as st
 import os
 from PIL import Image, ImageOps
-from streamlit_snowfall import snowfall
 
 # 1. PAGE CONFIG
 st.set_page_config(page_title="Our Sunflower Universe", page_icon="🌻", layout="wide")
